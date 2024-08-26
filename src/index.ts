@@ -118,6 +118,7 @@ function submit(e: Event) {
     ...config.user,
     feedbackType: (target.elements as any).feedbackType.value,
     message: (target.elements as any).message.value,
+    email: (target.elements as any).email.value,
     timestamp: Date.now(),
   };
 
