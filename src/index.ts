@@ -1,5 +1,6 @@
 import { computePosition, flip, shift } from "@floating-ui/dom";
 import { createFocusTrap } from "focus-trap";
+import posthog from "posthog-js";
 
 import { formHTML } from "./form-html";
 import formCSS from "./form.css";
@@ -8,6 +9,7 @@ export type FeedbackFinConfig = {
   url: string;
   user: Record<any, any>;
   disableErrorAlert: boolean;
+  posthog_key: string;
 };
 const config: FeedbackFinConfig = {
   url: "",
@@ -27,6 +29,8 @@ function init() {
   document.querySelectorAll("[data-feedbackfin-button]").forEach((el) => {
     el.addEventListener("click", open);
   });
+
+  posthog.init(config.posthog_key, { api_host: "https://us.i.posthog.com" });
 }
 window.addEventListener("load", init);
 
@@ -100,10 +104,10 @@ function submit(e: Event) {
   e.preventDefault();
   const target = e.target as HTMLFormElement;
 
-  if (!config.url) {
-    console.error("Feedback Fin: No URL provided");
+  if (!config.url || !config.posthog_key) {
+    console.error("Feedback Fin: No URL or key provided");
     if (!config.disableErrorAlert)
-      alert("Could not send feedback: No URL provided");
+      alert("Could not send feedback: No URL or key provided");
     return;
   }
 
@@ -122,20 +126,24 @@ function submit(e: Event) {
     timestamp: Date.now(),
   };
 
-  fetch(config.url, {
-    method: "POST",
-    headers: myHeaders,
-    body: JSON.stringify(data),
-  })
-    .then(() => {
-      containerElement.setAttribute("data-success", "");
+  if (config.posthog_key) {
+    posthog.capture("feedback_event", data);
+    containerElement.setAttribute("data-success", "");
+  } else {
+    fetch(config.url, {
+      method: "POST",
+      headers: myHeaders,
+      body: JSON.stringify(data),
     })
-    .catch((e) => {
-      console.error("Feedback Fin:", e);
-      if (!config.disableErrorAlert)
-        alert(`Could not send feedback: ${e.message}`);
-    });
-
+      .then(() => {
+        containerElement.setAttribute("data-success", "");
+      })
+      .catch((e) => {
+        console.error("Feedback Fin:", e);
+        if (!config.disableErrorAlert)
+          alert(`Could not send feedback: ${e.message}`);
+      });
+  }
   return false;
 }
 

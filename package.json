@@ -1,6 +1,6 @@
 {
   "name": "feedbackfin-with-email",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "license": "Apache-2.0",
   "homepage": "https://github.com/felixiho/feedbackfin",
   "repository": {
@@ -36,5 +36,8 @@
   },
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"
+  },
+  "dependencies": {
+    "posthog-js": "^1.157.2"
   }
 }
