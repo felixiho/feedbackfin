@@ -1,11 +1,11 @@
 {
-  "name": "feedbackfin",
+  "name": "feedbackfin-with-email",
   "version": "1.0.3",
   "license": "Apache-2.0",
-  "homepage": "https://feedbackfin.com",
+  "homepage": "https://github.com/felixiho/feedbackfin",
   "repository": {
     "type": "git",
-    "url": "https://github.com/rowyio/feedbackfin.git"
+    "url": "https://github.com/felixiho/feedbackfin"
   },
   "type": "module",
   "source": "src/index.ts",
